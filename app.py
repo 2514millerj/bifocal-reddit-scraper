@@ -45,7 +45,6 @@ def process_submissions(submissions):
         formatted_submissions.append(formatted_data)
 
     return formatted_submissions
-            
 
 def store_headlines(headlines):
     pass
@@ -53,7 +52,12 @@ def store_headlines(headlines):
 if __name__ == "__main__":
     logging.info("Running Bifocal News Reddit Scraper")
 
-    reddit = praw.Reddit()
+    reddit = praw.Reddit(
+        client_id=os.environ.get("REDDIT_CLIENT_ID"),
+        client_secret=os.environ.get("REDDIT_CLIENT_SECRET"),
+        password=os.environ.get("REDDIT_PASSWORD"),
+        username=os.environ.get("REDDIT_USERNAME")
+    )
 
     #get hottest posts from conservative and liberal subreddits
     submissions = get_submissions(reddit)
