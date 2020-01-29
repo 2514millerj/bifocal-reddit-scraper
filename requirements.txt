@@ -1,1 +1,4 @@
 praw
+beautifulsoup4
+sqlalchemy
+psycopg2
