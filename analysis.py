@@ -1,12 +1,13 @@
 import re
 from collections import Counter, namedtuple, defaultdict
 from string import punctuation, whitespace
-from newspaper import Article
+from newspaper import Article, Config
 import nltk
 from nltk.corpus import stopwords
+from bs4 import BeautifulSoup
+import logging
 
 import spacy
-from spacy import displacy
 from collections import Counter
 
 nlp = spacy.load("en_core_web_sm")
@@ -23,24 +24,43 @@ def get_names(text):
 
     return names
 
+def get_thumbnail_image(html):
+    soup = BeautifulSoup(html)
+    thumbnail = soup.find("meta",  property="og:image", features="lxml")
+
+    if thumbnail:
+        return thumbnail["content"]
+    else:
+        return ''
+
 def to_lower(text):
     return text.lower()
 
 def strip_numbers(content):
     return ''.join(c for c in content if not c.isdigit())
 
-def extract_keywords(url):
+def parse_submission(url):
     '''
     Input: HTTP URL
     Ouput: List of keywords compiled from names found in the article title and keywords found in the article text
     '''
-    a = Article(url)
-    a.download()
-    a.parse()
+    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
+    config = Config()
+    config.browser_user_agent = user_agent
+
+    a = Article(url, config=config)
+    try:
+        a.download()
+        a.parse()
+    except Exception as e:
+        logging.error(e)
+        return
+
     a.nlp()
     keywords = a.keywords
     title = a.title
     content = a.text
+    thumbnail_image = get_thumbnail_image(a.html)
 
     #clean up content
     content = to_lower(content)
@@ -70,4 +90,4 @@ def extract_keywords(url):
     #remove duplicates
     top_keywords = list(dict.fromkeys(top_keywords))
 
-    return top_keywords, a.title
+    return {'keywords': top_keywords, 'title': a.title, 'thumbnail_url': thumbnail_image}

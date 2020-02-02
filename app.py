@@ -4,7 +4,7 @@ import json
 import os
 
 from config import conservative_subreddits, liberal_subreddits
-from analysis import extract_keywords
+from analysis import parse_submission
 from database import Database
 
 def get_submissions(reddit):
@@ -33,17 +33,21 @@ def process_submissions(submissions):
         if any(substring in data.url for substring in invalid_content_types) or data.permalink in data.url:
             continue
 
-        keywords, title = extract_keywords(data.url)
+        metadata = parse_submission(data.url)
+
+        if not metadata:
+            continue
 
         news_article = {
             "news_type": label,
             "article_url": data.url,
             "upvote_ratio": data.upvote_ratio,
-            "title": title,
+            "title": metadata["title"],
             "upvotes": data.score,
             "reddit_permalink": data.permalink,
-            "keywords": keywords,
-            "created_utc": data.created_utc
+            "keywords": metadata["keywords"],
+            "created_utc": data.created_utc,
+            "thumbnail_url": metadata["thumbnail_url"]
         }
         print(news_article)
         print('\n\n\n')
@@ -73,5 +77,4 @@ if __name__ == "__main__":
     db.store_news_articles(news_articles)
 
     for article in news_articles:
-        db.store_keywords(article["keywords"])
-        db.link_keywords(article["article_url"], article["keywords"])
+        db.link_keywords(article["article_url"], article["keywords"], article["created_utc"])
