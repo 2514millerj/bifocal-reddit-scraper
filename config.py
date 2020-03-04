@@ -3,5 +3,5 @@ conservative_subreddits = [
 ]
 
 liberal_subreddits = [
-    "politics"
+    "liberal"
 ]

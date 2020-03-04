@@ -26,7 +26,7 @@ def get_names(text):
 
 def get_thumbnail_image(html):
     soup = BeautifulSoup(html)
-    thumbnail = soup.find("meta",  property="og:image", features="lxml")
+    thumbnail = soup.find("meta",  property="og:image")
 
     if thumbnail:
         return thumbnail["content"]
@@ -38,6 +38,17 @@ def to_lower(text):
 
 def strip_numbers(content):
     return ''.join(c for c in content if not c.isdigit())
+
+def remove_duplicates(top_keywords):
+    keywords = []
+    for i in top_keywords:
+        is_substring = False
+        for j in top_keywords:
+            if i in j and i != j:
+                is_substring = True
+        if not is_substring:
+            keywords.append(i)
+    return keywords
 
 def parse_submission(url):
     '''
@@ -79,15 +90,16 @@ def parse_submission(url):
             #if the name is in the title, it is significant
             top_keywords.append(name)
 
+    #Find other keywords that are not names and are found in the title
     for keyword in keywords:
         if keyword in title and keyword not in stop_words and not keyword.isdigit():
-            #Find other keywords that are not names and are found in the title
             top_keywords.append(keyword)
 
     if not top_keywords:
         top_keywords = title.split(" ")
-
-    #remove duplicates
-    top_keywords = list(dict.fromkeys(top_keywords))
+    else:
+        #remove duplicates
+        top_keywords = list(dict.fromkeys(top_keywords))
+        top_keywords = remove_duplicates(top_keywords)
 
     return {'keywords': top_keywords, 'title': a.title, 'thumbnail_url': thumbnail_image}

@@ -20,4 +20,5 @@ The schema is simple and contains a table for keywords, a table for news article
 
 ## Running the Script
 
+    pip3 install -r requirements.txt
     python app.py

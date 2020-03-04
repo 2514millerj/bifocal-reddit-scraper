@@ -30,7 +30,7 @@ def process_submissions(submissions):
         label = submission[0]
 
         invalid_content_types = ["jpg", "png", "gif", "jpeg"]
-        if any(substring in data.url for substring in invalid_content_types) or data.permalink in data.url:
+        if any(substring in data.url for substring in invalid_content_types) or data.permalink in data.url or "imgur" in data.url:
             continue
 
         metadata = parse_submission(data.url)
@@ -55,7 +55,7 @@ def process_submissions(submissions):
 
     return news_articles
 
-if __name__ == "__main__":
+def run():
     logging.info("Running Bifocal News Reddit Scraper")
 
     reddit = praw.Reddit(
@@ -78,3 +78,6 @@ if __name__ == "__main__":
 
     for article in news_articles:
         db.link_keywords(article["article_url"], article["keywords"], article["created_utc"])
+
+if if __name__ == "__main__":
+    run()
