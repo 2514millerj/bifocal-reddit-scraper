@@ -5,4 +5,4 @@ while read p; do
 done <.env
 
 . venv/bin/activate
-python app.py
+python main.py

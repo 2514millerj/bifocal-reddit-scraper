@@ -29,8 +29,14 @@ def process_submissions(submissions):
         data = submission[1]
         label = submission[0]
 
+        #ignore images and anything linking to imgur
         invalid_content_types = ["jpg", "png", "gif", "jpeg"]
         if any(substring in data.url for substring in invalid_content_types) or data.permalink in data.url or "imgur" in data.url:
+            continue
+
+        #filter out satire flair
+        invalid_flair = ["Satire"]
+        if data.link_flair_text in invalid_flair:
             continue
 
         metadata = parse_submission(data.url)
@@ -55,7 +61,7 @@ def process_submissions(submissions):
 
     return news_articles
 
-def run():
+def bifocal_reddit_scraper(request):
     logging.info("Running Bifocal News Reddit Scraper")
 
     reddit = praw.Reddit(
@@ -79,5 +85,7 @@ def run():
     for article in news_articles:
         db.link_keywords(article["article_url"], article["keywords"], article["created_utc"])
 
-if if __name__ == "__main__":
-    run()
+    return "success"
+
+if __name__ == "__main__":
+    bifocal_reddit_scraper(None)
