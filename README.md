@@ -1,5 +1,5 @@
 # Bifocal News Reddit Scraper
-Bifocal News is a website that takes liberal and conservative Reddit communities and compares what each other are talking about. This Reddit scraper pulls popular articles from each community and identifies important keywords. The article metadata and keywords are stored in a database to be retreived by the Bifocal News dashboard.
+[Bifocal News](https://bifocalnews.com) is a website that takes liberal and conservative Reddit communities and compares what each other are talking about. This Reddit scraper pulls popular articles from each community and identifies important keywords. The article metadata and keywords are stored in a database to be retreived by the Bifocal News dashboard.
 
 The Bifocal News scraper is open source in order to be totally transparent with its users about how data is collected. This repository can be cloned and ran to pull your own data for analysis and display.
 
